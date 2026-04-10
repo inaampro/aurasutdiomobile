@@ -251,17 +251,6 @@ main{padding-bottom:calc(64px + var(--sb));}
 .esh-cl{background:none;border:none;color:var(--st);font-size:22px;}
 .e-acts{display:flex;gap:10px;margin-top:14px;}
 .acanc{background:rgba(196,180,154,.1);color:var(--st);border:1px solid rgba(196,180,154,.18);padding:11px 20px;border-radius:3px;font-family:'DM Sans',sans-serif;font-size:12px;}
-/* IMAGE UPLOAD */
-.img-upload-wrap{border:1.5px dashed rgba(196,180,154,.25);border-radius:6px;padding:14px;text-align:center;cursor:pointer;transition:border-color .2s;position:relative;}
-.img-upload-wrap:hover{border-color:rgba(201,125,78,.5);}
-.img-upload-wrap input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
-.img-preview{width:100%;max-height:160px;object-fit:contain;border-radius:4px;margin-bottom:8px;display:none;}
-.img-preview.show{display:block;}
-.img-placeholder{font-size:28px;margin-bottom:6px;}
-.img-upload-hint{font-size:11px;color:var(--st);letter-spacing:.3px;}
-.img-upload-hint span{color:var(--ac);}
-.eb-color-row{display:flex;gap:10px;align-items:center;}
-.eb-color-swatch{width:36px;height:36px;border-radius:4px;border:1px solid rgba(196,180,154,.2);flex-shrink:0;cursor:pointer;}
 </style>
 </head>
 <body>
@@ -1105,7 +1094,7 @@ function renderArt(){
   id('art-grid').innerHTML=list.map(p=>`
     <div class="art-card">
       <div class="art-thumb" onclick="openPS(${p.id})">
-        ${p.imgUrl?`<img src="${p.imgUrl}" style="width:100%;height:100%;object-fit:cover;display:block;">`:p.svg}
+        ${p.svg}
         ${p.badge==='new'?'<div class="badge b-new">New</div>':''}
         ${p.badge==='bestseller'?'<div class="badge b-best">Bestseller</div>':''}
       </div>
@@ -1125,7 +1114,6 @@ function renderEbooks(){
   id('eb-list').innerHTML=S.ebooks.map(e=>`
     <div class="eb-card">
       <div class="eb-cover" style="background:${e.bg}">
-        ${e.imgUrl?`<img src="${e.imgUrl}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:4px;">`:''} 
         <div class="eb-cover-text">${e.title}</div>
       </div>
       <div class="eb-info">
@@ -1162,7 +1150,7 @@ function addC(pid,type){
   if(!item)return;
   const key=type+pid,ex=cart.find(c=>c.key===key);
   if(ex&&type==='art')ex.qty++;
-  else if(!ex)cart.push({key,id:pid,type,name:item.name||item.title,price:item.price,svg:item.svg,imgUrl:item.imgUrl||'',qty:1});
+  else if(!ex)cart.push({key,id:pid,type,name:item.name||item.title,price:item.price,svg:item.svg,qty:1});
   updateCart();toast(`"${item.name||item.title}" added ✦`);
 }
 function rmC(key){cart=cart.filter(c=>c.key!==key);updateCart();}
@@ -1174,7 +1162,7 @@ function updateCart(){
   id('cemp').style.display=cart.length?'none':'flex';
   id('clines').innerHTML=cart.map(c=>`
     <div class="cart-ln">
-      <div class="c-img">${c.imgUrl?`<img src="${c.imgUrl}" style="width:100%;height:100%;object-fit:cover;">`:c.svg||''}</div>
+      <div class="c-img">${c.svg}</div>
       <div class="c-info">
         <div class="c-name">${c.name}</div>
         <div class="c-price">₹${c.price}${c.qty>1?' × '+c.qty:''}</div>
@@ -1187,7 +1175,7 @@ function updateCart(){
 /* PRODUCT SHEET */
 function openPS(pid){
   const p=S.products.find(x=>x.id===pid);if(!p)return;
-  id('ps-img').innerHTML=p.imgUrl?`<img src="${p.imgUrl}" style="width:100%;height:100%;object-fit:cover;display:block;">`:p.svg;
+  id('ps-img').innerHTML=p.svg;
   id('ps-cat').textContent=p.cat;id('ps-name').textContent=p.name;
   id('ps-desc').textContent=p.desc||'';id('ps-price').textContent='₹'+p.price;
   id('ps-add').onclick=()=>{addC(pid,'art');closePS();openCart();};
@@ -1250,7 +1238,7 @@ function tab(p,btn){
 function renderWaList(){
   id('wa-list').innerHTML=S.products.map(p=>`
     <div class="pr-row">
-      <div class="pr-thumb">${p.imgUrl?`<img src="${p.imgUrl}" style="width:100%;height:100%;object-fit:cover;">`:p.svg}</div>
+      <div class="pr-thumb">${p.svg}</div>
       <div class="pr-info"><div class="pr-name">${p.name}</div><div class="pr-meta">${p.cat} · ₹${p.price}${p.badge?' · '+p.badge:''}</div></div>
       <div class="pr-acts"><button class="e-btn" onclick="openEdit('art',${p.id})">Edit</button><button class="d-btn" onclick="delProd(${p.id})">Del</button></div>
     </div>`).join('');
@@ -1258,7 +1246,7 @@ function renderWaList(){
 function renderEbList(){
   id('eb-list').innerHTML=S.ebooks.map(e=>`
     <div class="pr-row">
-      <div class="pr-thumb" style="background:${e.bg};overflow:hidden;position:relative;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:8px;color:rgba(255,255,255,.7);padding:4px;text-align:center;">${e.imgUrl?`<img src="${e.imgUrl}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">`:''}<span style="position:relative;z-index:1">${e.title}</span></div>
+      <div class="pr-thumb" style="background:${e.bg};display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:8px;color:rgba(255,255,255,.7);padding:4px;text-align:center;">${e.title}</div>
       <div class="pr-info"><div class="pr-name">${e.title}</div><div class="pr-meta">${e.tag} · ₹${e.price} · ${e.pages} pages</div></div>
       <div class="pr-acts"><button class="e-btn" onclick="openEdit('ebook',${e.id})">Edit</button><button class="d-btn" onclick="delEb(${e.id})">Del</button></div>
     </div>`).join('');
@@ -1308,20 +1296,7 @@ function openEdit(type,pid){
         <div class="adm-f"><label>Category</label><select class="asel" id="ef-c">${CATS.map(c=>`<option value="${c}"${p.cat===c?' selected':''}>${c}</option>`).join('')}</select></div>
       </div>
       <div class="adm-f"><label>Badge</label><select class="asel" id="ef-b">${BDGS.map(b=>`<option value="${b}"${p.badge===b?' selected':''}>${b||'None'}</option>`).join('')}</select></div>
-      <div class="adm-f"><label>Description</label><textarea class="ata" id="ef-d">${p.desc||''}</textarea></div>
-      <div class="adm-f">
-        <label>Product Image</label>
-        <div class="img-upload-wrap" onclick="document.getElementById('ef-img').click()">
-          <input type="file" id="ef-img" accept="image/*" style="display:none" onchange="previewImg(this,'ef-imgprev','ef-imgdata')">
-          <img class="img-preview${p.imgUrl?' show':''}" id="ef-imgprev" src="${p.imgUrl||''}" alt="preview">
-          <div id="ef-imgph" style="${p.imgUrl?'display:none':''}">
-            <div class="img-placeholder">🖼</div>
-            <div class="img-upload-hint">Tap to upload a photo<br><span>JPG, PNG, WEBP supported</span></div>
-          </div>
-          <div class="img-upload-hint" style="margin-top:6px;${p.imgUrl?'':'display:none'}" id="ef-imgchange">Tap to change image</div>
-        </div>
-        <input type="hidden" id="ef-imgdata" value="${p.imgUrl||''}">
-      </div>`;
+      <div class="adm-f"><label>Description</label><textarea class="ata" id="ef-d">${p.desc||''}</textarea></div>`;
   }else{
     const e=S.ebooks.find(x=>x.id===pid);
     id('esh-t').textContent='Edit Ebook';
@@ -1333,26 +1308,7 @@ function openEdit(type,pid){
       </div>
       <div class="adm-f"><label>Badge Label</label><input class="ainp" id="ef-bl" value="${e.badge}"></div>
       <div class="adm-f"><label>Pages</label><input class="ainp" type="number" id="ef-pg" value="${e.pages}"></div>
-      <div class="adm-f"><label>Description</label><textarea class="ata" id="ef-d">${e.desc}</textarea></div>
-      <div class="adm-f">
-        <label>Cover Image <span style="color:var(--st);font-size:9px;text-transform:none;letter-spacing:0">(overrides background colour)</span></label>
-        <div class="img-upload-wrap" onclick="document.getElementById('ef-img').click()">
-          <input type="file" id="ef-img" accept="image/*" style="display:none" onchange="previewImg(this,'ef-imgprev','ef-imgdata')">
-          <img class="img-preview${e.imgUrl?' show':''}" id="ef-imgprev" src="${e.imgUrl||''}" alt="preview">
-          <div id="ef-imgph" style="${e.imgUrl?'display:none':''}">
-            <div class="img-placeholder">📖</div>
-            <div class="img-upload-hint">Tap to upload a cover<br><span>JPG, PNG, WEBP supported</span></div>
-          </div>
-          <div class="img-upload-hint" style="margin-top:6px;${e.imgUrl?'':'display:none'}" id="ef-imgchange">Tap to change image</div>
-        </div>
-        <input type="hidden" id="ef-imgdata" value="${e.imgUrl||''}">
-      </div>
-      <div class="adm-f"><label>Background Colour (fallback)</label>
-        <div class="eb-color-row">
-          <input type="color" class="eb-color-swatch" id="ef-bg" value="${e.bg||'#2c2c2c'}" oninput="this.nextElementSibling.value=this.value">
-          <input class="ainp" id="ef-bgtext" value="${e.bg||'#2c2c2c'}" oninput="document.getElementById('ef-bg').value=this.value">
-        </div>
-      </div>`;
+      <div class="adm-f"><label>Description</label><textarea class="ata" id="ef-d">${e.desc}</textarea></div>`;
   }
   id('eov').style.display='block';
 }
@@ -1363,15 +1319,12 @@ function saveEdit(){
     const p=S.products.find(x=>x.id===editT.pid);
     p.name=id('ef-n').value;p.price=parseInt(id('ef-p').value)||p.price;
     p.cat=id('ef-c').value;p.badge=id('ef-b').value;p.desc=id('ef-d').value;
-    const imgd=id('ef-imgdata');if(imgd&&imgd.value)p.imgUrl=imgd.value;
     renderArt();renderTrending();renderWaList();renderEbooks();
   }else{
     const e=S.ebooks.find(x=>x.id===editT.pid);
     e.title=id('ef-n').value;e.price=parseInt(id('ef-p').value)||e.price;
     e.tag=id('ef-tag').value;e.badge=id('ef-bl').value;
     e.pages=parseInt(id('ef-pg').value)||e.pages;e.desc=id('ef-d').value;
-    const ebgtext=id('ef-bgtext');if(ebgtext)e.bg=ebgtext.value;
-    const eimgd=id('ef-imgdata');if(eimgd&&eimgd.value)e.imgUrl=eimgd.value;
     renderEbooks();renderEbList();
   }
   closeEdit();saveToStorage();toast('Saved ✦ — live on store');
@@ -1408,22 +1361,6 @@ function resetStore(){
   location.reload();
 }
 function id(x){return document.getElementById(x);}
-function previewImg(input,prevId,dataId){
-  const file=input.files[0];if(!file)return;
-  const reader=new FileReader();
-  reader.onload=function(e){
-    const src=e.target.result;
-    const prev=document.getElementById(prevId);
-    const data=document.getElementById(dataId);
-    const ph=document.getElementById('ef-imgph');
-    const ch=document.getElementById('ef-imgchange');
-    if(prev){prev.src=src;prev.classList.add('show');}
-    if(data){data.value=src;}
-    if(ph){ph.style.display='none';}
-    if(ch){ch.style.display='block';}
-  };
-  reader.readAsDataURL(file);
-}
 updateCart();
 </script>
 </body>
